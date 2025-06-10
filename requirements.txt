@@ -1,0 +1,13 @@
+# Modbus RTU 温度采集系统依赖包
+# 安装命令: pip install -r requirements.txt
+
+# Modbus通信库
+modbus_tk>=1.1.0
+
+# 串口通信库
+pyserial>=3.5
+
+# 可选：数据处理和可视化（如需扩展功能）
+# numpy>=1.21.0
+# matplotlib>=3.5.0
+# pandas>=1.3.0
