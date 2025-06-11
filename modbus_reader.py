@@ -148,9 +148,6 @@ class ModbusTemperatureReader:
                     print(f"\n[{timestamp}] 温度数据读取:")
                     print(f"原始寄存器值: {raw_data}")
                     print(f"解析温度值: {[f'{temp:.1f}°C' for temp in temperatures]}")
-                    
-                    # 检查异常温度（可选）
-                    self.check_temperature_alerts(temperatures)
                 else:
                     print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] 温度数据读取失败")
                 
@@ -163,18 +160,6 @@ class ModbusTemperatureReader:
             log.error(f"监控过程异常: {str(e)}")
         finally:
             self.disconnect()
-    
-    def check_temperature_alerts(self, temperatures, threshold=30.0):
-        """
-        检查温度报警
-        
-        Args:
-            temperatures (list): 温度值列表
-            threshold (float): 报警阈值，默认30.0°C
-        """
-        for i, temp in enumerate(temperatures):
-            if temp > threshold:
-                print(f"⚠️  警报！传感器{i+1}温度超标: {temp:.1f}°C (阈值: {threshold}°C)")
 
 
 def main():
