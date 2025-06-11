@@ -7,7 +7,7 @@
 
 
 
-这是一个使用 Python 和 modbus_tk 库实现的 Modbus RTU 温度采集演示程序。
+这是一个使用 Python 和 minimalmodbus 库实现的 Modbus RTU 温度采集演示程序。
 
 ## 功能特性
 
@@ -30,7 +30,7 @@
 pip install -r requirements.txt
 
 # 或者手动安装
-pip install modbus_tk pyserial
+pip install minimalmodbus pyserial
 ```
 
 ## 配置说明

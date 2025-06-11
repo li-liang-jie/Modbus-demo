@@ -2,7 +2,7 @@
 # 安装命令: pip install -r requirements.txt
 
 # Modbus通信库
-modbus_tk>=1.1.0
+minimalmodbus>=2.1.0
 
 # 串口通信库
 pyserial>=3.5

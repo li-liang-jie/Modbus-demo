@@ -7,9 +7,7 @@ Modbus RTU 温度采集模块通信程序
 日期：2024
 """
 
-import modbus_tk
-import modbus_tk.defines as cst
-from modbus_tk import modbus_rtu
+import minimalmodbus
 import serial
 import time
 import logging
@@ -36,7 +34,7 @@ class ModbusTemperatureReader:
         self.port = port
         self.baudrate = baudrate
         self.slave_id = slave_id
-        self.master = None
+        self.instrument = None
         
         log.info(f"初始化Modbus客户端: 端口={port}, 波特率={baudrate}, 从站={slave_id}")
     
@@ -48,19 +46,13 @@ class ModbusTemperatureReader:
             bool: 连接成功返回True，失败返回False
         """
         try:
-            # 创建Modbus RTU主站
-            self.master = modbus_rtu.RtuMaster(
-                serial.Serial(
-                    port=self.port,
-                    baudrate=self.baudrate,
-                    bytesize=8,
-                    parity='N',
-                    stopbits=1,
-                    timeout=1
-                )
-            )
-            self.master.set_timeout(1.0)
-            self.master.set_verbose(True)
+            # 创建MinimalModbus仪器对象
+            self.instrument = minimalmodbus.Instrument(self.port, self.slave_id)
+            self.instrument.serial.baudrate = self.baudrate
+            self.instrument.serial.bytesize = 8
+            self.instrument.serial.parity = 'N'
+            self.instrument.serial.stopbits = 1
+            self.instrument.serial.timeout = 1.0
             log.info("Modbus设备连接成功")
             return True
         except Exception as e:
@@ -72,8 +64,8 @@ class ModbusTemperatureReader:
         断开Modbus连接
         """
         try:
-            if self.master:
-                self.master.close()
+            if self.instrument:
+                self.instrument.serial.close()
                 log.info("Modbus连接已断开")
         except Exception as e:
             log.error(f"断开连接异常: {str(e)}")
@@ -90,17 +82,12 @@ class ModbusTemperatureReader:
             list: 温度数据列表，读取失败返回空列表
         """
         try:
-            if not self.master:
-                log.error("Modbus主站未初始化")
+            if not self.instrument:
+                log.error("Modbus仪器未初始化")
                 return []
             
             # 读取保持寄存器（功能码03）
-            registers = self.master.execute(
-                self.slave_id,
-                cst.READ_HOLDING_REGISTERS,
-                start_address,
-                count
-            )
+            registers = self.instrument.read_registers(start_address, count, functioncode=3)
             
             log.debug(f"读取到{len(registers)}个寄存器值: {registers}")
             return list(registers)
